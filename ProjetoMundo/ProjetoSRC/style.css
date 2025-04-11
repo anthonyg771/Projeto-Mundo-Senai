@@ -1,0 +1,161 @@
+/* Estilo global */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f4f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  color: #333;
+}
+
+h1 {
+  color: #2d8a92;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+/* Centraliza e dá estilo ao contêiner principal */
+#login, #jogo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+}
+
+/* Estilo do input */
+input[type="text"], input[type="number"] {
+  padding: 10px;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 350px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+/* Estilo dos botões */
+button {
+  padding: 10px 20px;
+  background-color: #2d8a92;
+  color: #fff;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1d7075;
+}
+
+/* Estilo dos botões de "Reiniciar" e "Compartilhar" */
+button#btnReiniciar {
+  background-color: #f44336;
+}
+
+button#btnReiniciar:hover {
+  background-color: #c13529;
+}
+
+button#compartilhar {
+  background-color: #4caf50;
+}
+
+button#compartilhar:hover {
+  background-color: #388e3c;
+}
+
+/* Estilo do retângulo de pontuação */
+.info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#pontuacao {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #2d8a92;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+/* Estilo do ranking */
+#ranking, #rankingLogin {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+  max-width: 350px;
+  margin: 0;
+}
+
+#ranking li {
+  background-color: #e1f5fe;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+#ranking li:hover {
+  background-color: #b3e5fc;
+}
+
+/* Estilo do botão de "Mostrar todos" */
+#btnMostrarTodos {
+  margin-top: 20px;
+  background-color: #ff9800;
+}
+
+#btnMostrarTodos:hover {
+  background-color: #f57c00;
+}
+
+/* Estilo do jogo e cenários */
+.cenario {
+  font-size: 1.2rem;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+#palpite {
+  width: 100%;
+  max-width: 350px;
+}
+
+/* Centraliza os itens do jogo */
+#jogo {
+  display: none;
+}
+
+/* Tamanho da tela para dispositivos móveis */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+}
