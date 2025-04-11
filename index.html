@@ -2,328 +2,357 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chances de Chuva no Rolê</title>
- <style>
-/* Estilo global */
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f0f4f8;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  margin: 0;
-  color: #333;
-}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Probabilidade com Cartas</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-image: url('https://cdn.pixabay.com/photo/2016/04/01/10/10/poker-1299962_1280.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-h1 {
-  color: #2d8a92;
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-}
+    .score {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: #ffffffdd;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      z-index: 999;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-/* Centraliza e dá estilo ao contêiner principal */
-#login, #jogo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 600px;
-}
+    #container {
+      background-color: rgba(255, 255, 255, 0.95);
+      margin-top: 40px;
+      border-radius: 12px;
+      padding: 25px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      position: relative;
+    }
 
-/* Estilo do input */
-input[type="text"], input[type="number"] {
-  padding: 10px;
-  margin: 10px 0;
-  width: 100%;
-  max-width: 350px;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-}
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 15px;
+    }
 
-/* Estilo dos botões */
-button {
-  padding: 10px 20px;
-  background-color: #2d8a92;
-  color: #fff;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
-}
+    .question {
+      font-size: 18px;
+      margin: 20px 0;
+    }
 
-button:hover {
-  background-color: #1d7075;
-}
+    input[type="number"], button {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
 
-/* Estilo dos botões de "Reiniciar" e "Compartilhar" */
-button#btnReiniciar {
-  background-color: #f44336;
-}
+    #next-btn, #reset-btn {
+      display: none;
+      background-color: #4CAF50;
+      color: white;
+    }
 
-button#btnReiniciar:hover {
-  background-color: #c13529;
-}
+    #ranking-box {
+      margin-top: 30px;
+      background: #eee;
+      padding: 15px;
+      border-radius: 10px;
+    }
 
-button#compartilhar {
-  background-color: #4caf50;
-}
+    #ranking-box h3 {
+      margin-top: 0;
+    }
 
-button#compartilhar:hover {
-  background-color: #388e3c;
-}
+    #ranking-list {
+      list-style: none;
+      padding: 0;
+    }
 
-/* Estilo do retângulo de pontuação */
-.info {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  background-color: #f7f7f7;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+    #ranking-list li {
+      margin: 5px 0;
+      font-size: 15px;
+    }
 
-#pontuacao {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: #2d8a92;
-  padding: 10px 20px;
-  border-radius: 5px;
-}
+    #players-btn {
+      margin-top: 10px;
+      background-color: #888;
+      color: white;
+    }
 
-/* Estilo do ranking */
-#ranking, #rankingLogin {
-  list-style-type: none;
-  padding: 0;
-  width: 100%;
-  max-width: 350px;
-  margin: 0;
-}
+    #feedback {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 16px;
+    }
 
-#ranking li {
-  background-color: #e1f5fe;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-  font-size: 1rem;
-}
+    .success {
+      color: green;
+    }
 
-#ranking li:hover {
-  background-color: #b3e5fc;
-}
+    .error {
+      color: red;
+    }
 
-/* Estilo do botão de "Mostrar todos" */
-#btnMostrarTodos {
-  margin-top: 20px;
-  background-color: #ff9800;
-}
+    .emoji-card {
+      font-size: 30px;
+      text-align: center;
+      margin-top: 20px;
+    }
 
-#btnMostrarTodos:hover {
-  background-color: #f57c00;
-}
+    #name-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
 
-/* Estilo do jogo e cenários */
-.cenario {
-  font-size: 1.2rem;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  margin: 20px 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
+    #name-screen input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      margin: 15px;
+    }
 
-#palpite {
-  width: 100%;
-  max-width: 350px;
-}
+    #name-screen button {
+      padding: 10px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+    }
 
-/* Centraliza os itens do jogo */
-#jogo {
-  display: none;
-}
+    #name-container {
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 10px;
+      padding: 20px;
+      width: 80%;
+      max-width: 400px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      text-align: center;
+    }
 
-/* Tamanho da tela para dispositivos móveis */
-@media (max-width: 600px) {
-  body {
-    padding: 10px;
-  }
-  
-  h1 {
-    font-size: 2rem;
-  }
-}
+    #delete-btn {
+      margin-top: 20px;
+      background-color: red;
+      color: white;
+    }
 
-
-
- </style>
+  </style>
 </head>
 <body>
-  <h1>☔ Chances de Chuva no Rolê</h1>
 
-  <div id="login">
-    <p>Digite seu nome para começar:</p>
-    <input type="text" id="nomeInput" placeholder="Seu nome" />
-    <button onclick="iniciarJogo()">Começar</button>
-    <button onclick="resetarRanking()" style="margin-top: 10px; background-color: #cc0000;">🗑️ Apagar Ranking</button>
-
-    <h2 style="margin-top: 30px;">🏆 Ranking Atual</h2>
-    <ul id="rankingLogin"></ul>
+  <!-- Tela de entrada para digitar o nome -->
+  <div id="name-screen">
+    <div id="name-container">
+      <h2>Digite seu nome para começar:</h2>
+      <input type="text" id="player-name" placeholder="Nome do Jogador" />
+      <button onclick="startGame()">Iniciar Jogo</button>
+      <button id="delete-btn" onclick="clearRanking()">Excluir Dados Salvos</button>
+    </div>
   </div>
 
-  <div id="jogo" style="display: none;">
-    <div class="info">
-      <p><strong>Jogador:</strong> <span id="jogadorNome"></span></p>
-      <p><strong>Pontuação:</strong> <span id="pontuacao">0</span></p>
+  <!-- ✅ PONTUAÇÃO NO CANTO DIREITO -->
+  <div class="score" id="score">Pontuação: 0</div>
+
+  <div id="container">
+    <h1>Probabilidade com Cartas 🃏</h1>
+    
+    <div id="question-box">
+      <p class="question" id="question-text">Carregando pergunta...</p>
+      <input type="number" id="answer" placeholder="Digite a probabilidade (%)">
+      <button onclick="checkAnswer()">Enviar Resposta</button>
+      <div id="feedback"></div>
+      <button id="next-btn" onclick="nextQuestion()">Próxima Pergunta</button>
+      <button id="reset-btn" onclick="resetGame()">Resetar Jogo</button>
     </div>
 
-    <div class="cenario" id="cenario">Carregando...</div>
-    <input type="number" id="palpite" placeholder="Qual a chance de chover? (%)" min="0" max="100" />
-    <button onclick="verificarChute()">Enviar</button>
-    <button id="btnProxima" onclick="proximaPergunta()" style="display: none;">➡️ Próxima Pergunta</button>
-    <div class="resultado" id="resultado"></div>
+    <div class="emoji-card">♠️ ♥️ ♣️ ♦️</div>
 
-    <button onclick="reiniciarJogo()" id="btnReiniciar" style="display: none;">🔁 Reiniciar</button>
-    <button onclick="compartilhar()" style="margin-top: 10px;">🔗 Compartilhar</button>
-
-    <h2>🏆 Ranking</h2>
-    <ul id="ranking"></ul>
-
-    <button id="btnMostrarTodos" onclick="mostrarTodosJogadores()">Mostrar todos os jogadores</button>
+    <div id="ranking-box">
+      <h3>Ranking Top 10</h3>
+      <ul id="ranking-list"></ul>
+      <button id="players-btn" onclick="showAllPlayers()">Mostrar todos jogadores</button>
+    </div>
   </div>
 
   <script>
-const cenarios = [
-  { texto: "Segunda, 18h. Céu nublado e úmido.", chanceReal: 70 },
-  { texto: "Domingo, 15h. Solzão sem nuvem.", chanceReal: 10 },
-  { texto: "Quarta, 7h. Céu encoberto, abafado.", chanceReal: 60 },
-  { texto: "Sábado, 13h. Parcialmente nublado.", chanceReal: 30 },
-  { texto: "Sexta, 21h. Vento e relâmpagos distantes.", chanceReal: 80 }
-];
+    const questions = [
+      { q: "Você tem 10 cartas numeradas de 1 a 10. Qual a chance de tirar uma carta com número maior que 7?", p: 30 },
+      { q: "Um baralho comum tem 52 cartas. Qual a chance de tirar uma carta de copas?", p: 25 },
+      { q: "Você embaralha 4 cartas: 1 vermelha, 1 azul, 1 verde, 1 amarela. Qual a chance de tirar a vermelha?", p: 25 },
+      { q: "Há 5 cartas: 3 corações, 2 espadas. Qual a chance de pegar coração?", p: 60 },
+      { q: "Num baralho comum, qual a chance de tirar uma carta com número 7?", p: 7.7 },
+      { q: "Você criou 6 cartas: 2 “Sim”, 4 “Não”. Qual a chance de tirar um “Sim”?", p: 33.3 },
+      { q: "Você tem 8 cartas: 4 vermelhas, 4 pretas. Qual a chance de tirar uma vermelha?", p: 50 },
+      { q: "Você tem 9 cartas: 1 a 9. Qual a chance de tirar um número ímpar?", p: 55.5 },
+      { q: "6 emojis: 3 felizes, 3 tristes. Qual a chance de tirar triste?", p: 50 },
+      { q: "Sortear carta entre A, B, C, D, E. Chance de cair D?", p: 20 },
+      { q: "4 cartas: 2, 4, 6, 8. Qual a chance de tirar ímpar?", p: 0 },
+      { q: "10 cartas 1–10. Chance de número < 5?", p: 40 },
+      { q: "12 cartas: 6 animais, 6 frutas. Qual a chance de fruta?", p: 50 },
+      { q: "52 cartas. Chance de tirar um Rei?", p: 7.7 },
+      { q: "Baralho com só figuras J/Q/K. Qual a chance de Rainha?", p: 33.3 },
+      { q: "3 cartas: Estudar, Descansar, Festa. Qual a chance de tirar Festa?", p: 33.3 },
+      { q: "7 cartas: 5 com número 1, 2 com número 2. Chance de tirar 2?", p: 28.6 },
+      { q: "Cartas 1 a 6. Qual a chance de número par?", p: 50 },
+      { q: "10 cartas, só 1 dá prêmio. Chance de ganhar?", p: 10 },
+      { q: "6 cartas: 2 vermelhas, 2 verdes, 2 azuis. Chance de azul?", p: 33.3 }
+    ];
 
-let jogador = "";
-let pontuacao = 0;
-let cenarioAtual = {};
-let jogoAtivo = false;
-let ranking = JSON.parse(localStorage.getItem("rankingChuva")) || [];
+    let current = 0;
+    let score = 0;
+    let playerName = "";
 
-function iniciarJogo() {
-  const nomeInput = document.getElementById("nomeInput").value.trim();
-  if (!nomeInput) {
-    alert("Digite um nome!");
-    return;
-  }
-  if (ranking.find(j => j.nome.toLowerCase() === nomeInput.toLowerCase())) {
-    alert("Esse nome já foi usado. Escolha outro!");
-    return;
-  }
+    // Função para embaralhar perguntas aleatoriamente
+    function shuffleQuestions() {
+      for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]];
+      }
+    }
 
-  jogador = nomeInput;
-  document.getElementById("jogadorNome").innerText = jogador;
-  document.getElementById("login").style.display = "none";
-  document.getElementById("jogo").style.display = "block";
+    function startGame() {
+      playerName = document.getElementById('player-name').value;
 
-  pontuacao = 0;
-  jogoAtivo = true;
-  atualizarPontuacao();
-  carregarCenario();
-  atualizarRankingUI();
-}
+      // Verifica se o nome tem pelo menos 3 letras e não contém números
+      if (playerName.trim().length < 3) {
+        alert("O nome deve ter pelo menos 3 letras.");
+        return;
+      }
 
-function carregarCenario() {
-  const aleatorio = Math.floor(Math.random() * cenarios.length);
-  cenarioAtual = cenarios[aleatorio];
-  document.getElementById("cenario").innerText = cenarioAtual.texto;
-}
+      if (/\d/.test(playerName)) {
+        alert("O nome não pode conter números.");
+        return;
+      }
 
-function verificarChute() {
-  if (!jogoAtivo) return;
+      // Verifica se o nome já existe no ranking
+      let ranking = JSON.parse(localStorage.getItem("ranking") || "[]");
+      if (ranking.find(p => p.name === playerName)) {
+        alert("Este nome já existe no ranking.");
+        return;
+      }
 
-  const palpite = parseInt(document.getElementById("palpite").value);
-  const chanceReal = cenarioAtual.chanceReal;
+      shuffleQuestions(); // Embaralha as perguntas antes de começar
+      document.getElementById('name-screen').style.display = 'none';
+      loadQuestion();
+    }
 
-  if (isNaN(palpite) || palpite < 0 || palpite > 100) {
-    document.getElementById("resultado").innerText = "Digite um número de 0 a 100.";
-    return;
-  }
+    function loadQuestion() {
+      const q = questions[current];
+      document.getElementById('question-text').innerText = q.q;
+      document.getElementById('answer').value = "";
+      document.getElementById('feedback').innerText = "";
+      document.getElementById('feedback').className = "";
+      document.getElementById('next-btn').style.display = 'none';
+      document.getElementById('reset-btn').style.display = 'none';
+    }
 
-  const margem = 10;
-  const acertou = Math.abs(palpite - chanceReal) <= margem;
+    function checkAnswer() {
+      const user = parseFloat(document.getElementById('answer').value);
+      const feedback = document.getElementById("feedback");
+      if (isNaN(user)) {
+        feedback.innerText = "Digite uma porcentagem válida.";
+        feedback.className = "error";
+        return;
+      }
+      const real = questions[current].p;
 
-  if (acertou) {
-    pontuacao += 10;
-    atualizarPontuacao();
-    document.getElementById("resultado").innerText = `✅ Boa! Chance real: ${chanceReal}%`;
-    carregarCenario();
-    document.getElementById("palpite").value = "";
-    document.getElementById("btnProxima").style.display = "inline-block";  // Mostrar o botão de próxima pergunta
-  } else {
-    document.getElementById("resultado").innerText = `❌ Errou! Chance real era ${chanceReal}%. Fim de jogo.`;
-    jogoAtivo = false;
-    salvarPontuacao();
-    atualizarRankingUI();
-    document.getElementById("btnReiniciar").style.display = "inline-block";
-  }
-}
+      // Definir tolerância para a resposta
+      const tolerance = 5; // Pode ser ajustado conforme necessário
+      const diff = Math.abs(user - real);
 
-function atualizarPontuacao() {
-  document.getElementById("pontuacao").innerText = pontuacao;
-}
+      if (diff <= tolerance) {
+        score += 10;
+        document.getElementById("score").innerText = `Pontuação: ${score}`;
+        feedback.innerText = `Acertou! A resposta era ${real}%.`;
+        feedback.className = "success";
+      } else {
+        feedback.innerText = `Errou! A resposta certa era ${real}%.`;
+        feedback.className = "error";
+        saveToRanking(score);
+        score = 0;
+        document.getElementById("score").innerText = `Pontuação: ${score}`;
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('reset-btn').style.display = 'inline-block';
+      }
+      document.getElementById("next-btn").style.display = "inline-block";
+    }
 
-function salvarPontuacao() {
-  ranking.push({ nome: jogador, pontos: pontuacao });
-  ranking.sort((a, b) => b.pontos - a.pontos);
-  localStorage.setItem("rankingChuva", JSON.stringify(ranking));
-}
+    function nextQuestion() {
+      current++;
+      if (current >= questions.length) current = 0;
+      loadQuestion();
+    }
 
-function atualizarRankingUI() {
-  const rankingEl = document.getElementById("ranking");
-  rankingEl.innerHTML = "";
-  
-  ranking.slice(0, 10).forEach((entry, i) => {
-    const item = `<li><strong>${i + 1}.</strong> ${entry.nome} — ${entry.pontos} pts</li>`;
-    rankingEl.innerHTML += item;
-  });
-}
+    function resetGame() {
+      current = 0;
+      score = 0;
+      document.getElementById("score").innerText = `Pontuação: ${score}`;
+      document.getElementById('reset-btn').style.display = 'none';
+      document.getElementById('next-btn').style.display = 'none';
+      document.getElementById('feedback').innerText = "";
+      document.getElementById('feedback').className = "";
+      document.getElementById('answer').value = "";
+    }
 
-function reiniciarJogo() {
-  location.reload();
-}
+    function saveToRanking(score) {
+      let ranking = JSON.parse(localStorage.getItem("ranking") || "[]");
+      ranking.push({ name: playerName, score: score });
+      ranking.sort((a, b) => b.score - a.score);
+      ranking = ranking.slice(0, 10); // Mantém só os 10 primeiros
+      localStorage.setItem("ranking", JSON.stringify(ranking));
+      renderRanking();
+    }
 
-function mostrarTodosJogadores() {
-  alert("Jogadores que já participaram: " + ranking.map(entry => entry.nome).join(", "));
-}
+    function renderRanking() {
+      let ranking = JSON.parse(localStorage.getItem("ranking") || "[]");
+      const rankingList = document.getElementById('ranking-list');
+      rankingList.innerHTML = "";
+      ranking.forEach(player => {
+        let li = document.createElement('li');
+        li.innerText = `${player.name}: ${player.score} pontos`;
+        rankingList.appendChild(li);
+      });
+    }
 
-function resetarRanking() {
-  const confirmacao = confirm("Tem certeza que deseja apagar todos os dados do ranking?");
-  if (confirmacao) {
-    localStorage.removeItem("rankingChuva");
-    ranking = [];
-    atualizarRankingUI();
-    alert("Ranking apagado com sucesso!");
-  }
-}
+    function showAllPlayers() {
+      let ranking = JSON.parse(localStorage.getItem("ranking") || "[]");
+      alert("Jogadores que jogaram: " + ranking.map(player => `${player.name} (${player.score} pontos)`).join(", "));
+    }
 
-function proximaPergunta() {
-  carregarCenario();
-  document.getElementById("btnProxima").style.display = "none";
-}
-
-
-
+    function clearRanking() {
+      const confirmation = confirm("Tem certeza de que deseja excluir todos os dados?");
+      if (confirmation) {
+        localStorage.removeItem("ranking");
+        renderRanking();
+      }
+    }
   </script>
 </body>
 </html>
