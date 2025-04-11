@@ -4,7 +4,172 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chances de Chuva no Rolê</title>
-  <link rel="stylesheet" href="style.css" />
+ <style>
+/* Estilo global */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f4f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  color: #333;
+}
+
+h1 {
+  color: #2d8a92;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+/* Centraliza e dá estilo ao contêiner principal */
+#login, #jogo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+}
+
+/* Estilo do input */
+input[type="text"], input[type="number"] {
+  padding: 10px;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 350px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+/* Estilo dos botões */
+button {
+  padding: 10px 20px;
+  background-color: #2d8a92;
+  color: #fff;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1d7075;
+}
+
+/* Estilo dos botões de "Reiniciar" e "Compartilhar" */
+button#btnReiniciar {
+  background-color: #f44336;
+}
+
+button#btnReiniciar:hover {
+  background-color: #c13529;
+}
+
+button#compartilhar {
+  background-color: #4caf50;
+}
+
+button#compartilhar:hover {
+  background-color: #388e3c;
+}
+
+/* Estilo do retângulo de pontuação */
+.info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#pontuacao {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #2d8a92;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+/* Estilo do ranking */
+#ranking, #rankingLogin {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+  max-width: 350px;
+  margin: 0;
+}
+
+#ranking li {
+  background-color: #e1f5fe;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+#ranking li:hover {
+  background-color: #b3e5fc;
+}
+
+/* Estilo do botão de "Mostrar todos" */
+#btnMostrarTodos {
+  margin-top: 20px;
+  background-color: #ff9800;
+}
+
+#btnMostrarTodos:hover {
+  background-color: #f57c00;
+}
+
+/* Estilo do jogo e cenários */
+.cenario {
+  font-size: 1.2rem;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+#palpite {
+  width: 100%;
+  max-width: 350px;
+}
+
+/* Centraliza os itens do jogo */
+#jogo {
+  display: none;
+}
+
+/* Tamanho da tela para dispositivos móveis */
+@media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+}
+
+
+
+ </style>
 </head>
 <body>
   <h1>☔ Chances de Chuva no Rolê</h1>
@@ -40,6 +205,125 @@
     <button id="btnMostrarTodos" onclick="mostrarTodosJogadores()">Mostrar todos os jogadores</button>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+const cenarios = [
+  { texto: "Segunda, 18h. Céu nublado e úmido.", chanceReal: 70 },
+  { texto: "Domingo, 15h. Solzão sem nuvem.", chanceReal: 10 },
+  { texto: "Quarta, 7h. Céu encoberto, abafado.", chanceReal: 60 },
+  { texto: "Sábado, 13h. Parcialmente nublado.", chanceReal: 30 },
+  { texto: "Sexta, 21h. Vento e relâmpagos distantes.", chanceReal: 80 }
+];
+
+let jogador = "";
+let pontuacao = 0;
+let cenarioAtual = {};
+let jogoAtivo = false;
+let ranking = JSON.parse(localStorage.getItem("rankingChuva")) || [];
+
+function iniciarJogo() {
+  const nomeInput = document.getElementById("nomeInput").value.trim();
+  if (!nomeInput) {
+    alert("Digite um nome!");
+    return;
+  }
+  if (ranking.find(j => j.nome.toLowerCase() === nomeInput.toLowerCase())) {
+    alert("Esse nome já foi usado. Escolha outro!");
+    return;
+  }
+
+  jogador = nomeInput;
+  document.getElementById("jogadorNome").innerText = jogador;
+  document.getElementById("login").style.display = "none";
+  document.getElementById("jogo").style.display = "block";
+
+  pontuacao = 0;
+  jogoAtivo = true;
+  atualizarPontuacao();
+  carregarCenario();
+  atualizarRankingUI();
+}
+
+function carregarCenario() {
+  const aleatorio = Math.floor(Math.random() * cenarios.length);
+  cenarioAtual = cenarios[aleatorio];
+  document.getElementById("cenario").innerText = cenarioAtual.texto;
+}
+
+function verificarChute() {
+  if (!jogoAtivo) return;
+
+  const palpite = parseInt(document.getElementById("palpite").value);
+  const chanceReal = cenarioAtual.chanceReal;
+
+  if (isNaN(palpite) || palpite < 0 || palpite > 100) {
+    document.getElementById("resultado").innerText = "Digite um número de 0 a 100.";
+    return;
+  }
+
+  const margem = 10;
+  const acertou = Math.abs(palpite - chanceReal) <= margem;
+
+  if (acertou) {
+    pontuacao += 10;
+    atualizarPontuacao();
+    document.getElementById("resultado").innerText = `✅ Boa! Chance real: ${chanceReal}%`;
+    carregarCenario();
+    document.getElementById("palpite").value = "";
+    document.getElementById("btnProxima").style.display = "inline-block";  // Mostrar o botão de próxima pergunta
+  } else {
+    document.getElementById("resultado").innerText = `❌ Errou! Chance real era ${chanceReal}%. Fim de jogo.`;
+    jogoAtivo = false;
+    salvarPontuacao();
+    atualizarRankingUI();
+    document.getElementById("btnReiniciar").style.display = "inline-block";
+  }
+}
+
+function atualizarPontuacao() {
+  document.getElementById("pontuacao").innerText = pontuacao;
+}
+
+function salvarPontuacao() {
+  ranking.push({ nome: jogador, pontos: pontuacao });
+  ranking.sort((a, b) => b.pontos - a.pontos);
+  localStorage.setItem("rankingChuva", JSON.stringify(ranking));
+}
+
+function atualizarRankingUI() {
+  const rankingEl = document.getElementById("ranking");
+  rankingEl.innerHTML = "";
+  
+  ranking.slice(0, 10).forEach((entry, i) => {
+    const item = `<li><strong>${i + 1}.</strong> ${entry.nome} — ${entry.pontos} pts</li>`;
+    rankingEl.innerHTML += item;
+  });
+}
+
+function reiniciarJogo() {
+  location.reload();
+}
+
+function mostrarTodosJogadores() {
+  alert("Jogadores que já participaram: " + ranking.map(entry => entry.nome).join(", "));
+}
+
+function resetarRanking() {
+  const confirmacao = confirm("Tem certeza que deseja apagar todos os dados do ranking?");
+  if (confirmacao) {
+    localStorage.removeItem("rankingChuva");
+    ranking = [];
+    atualizarRankingUI();
+    alert("Ranking apagado com sucesso!");
+  }
+}
+
+function proximaPergunta() {
+  carregarCenario();
+  document.getElementById("btnProxima").style.display = "none";
+}
+
+
+
+  </script>
 </body>
 </html>
